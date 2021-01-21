@@ -18,4 +18,5 @@ async function fetchFlowVolume(chip_id, user_id) {
 	$gameVariables.setValue(17, body.monthly_flow_volume)
 	$gameVariables.setValue(18, body.yearly_flow_volume)
 	$gameVariables.setValue(19, body.total_flow_volume)
+	$gameVariables.setValue(20, body.last_flow_volume)
 }
