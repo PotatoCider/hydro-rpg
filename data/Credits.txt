@@ -13,17 +13,14 @@ SumRndmDde http://sumrndm.site/
 Galv
 Felski
 Shaz
+Casper Gaming https://www.caspergaming.com/
 
 \c[2]Artwork
 RPG Maker MV
 SumRndmDde http://sumrndm.site/
 The Free Archives © Dreams Circle
 
-\c[2]Thanks to PUB Splash Lab
+\c[2]Made for PUB Splash Lab
 
 </block>
 
-
-<block:999,0,10,10,300,center,Tower1>
-THE END
-</block>
