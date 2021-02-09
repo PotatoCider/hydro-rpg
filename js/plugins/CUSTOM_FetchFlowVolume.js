@@ -31,15 +31,15 @@ async function loadFVConfig() {
 
 async function fetchFlowVolume(chip_id = $gameVariables.value(13), user_id = $gameVariables.value(14)) {
 
-	const res = await fetch(`http://aipl.duckdns.org:3000/flow_volume?chip_id=${chip_id}&user_id=${user_id}`)
+	const res = await FVMakeRequest({ method: 'GET', url: `http://aipl.duckdns.org:3000/flow_volume?chip_id=${chip_id}&user_id=${user_id}` })
 	if (res.status !== 200) {
-		const err = await res.text()
+		const err = res.responseText
 		console.error(err)
 		$gameVariables.setValue(12, err)
 		return {}
 	}
 		
-	const body = await res.json()
+	const body = JSON.parse(res.response)
 
 	// $gameVariables.setValue(12, 0)
 	// $gameVariables.setValue(15, body.daily_flow_volume)
@@ -59,18 +59,19 @@ async function signupFlowVolume(chip_id = $gameVariables.value(13)) {
 		return {}
 	}
 
-	const res = await fetch(`http://aipl.duckdns.org:3000/signup`, { 
+	const res = await FVMakeRequest({
+		url: `http://aipl.duckdns.org:3000/signup`, 
 		method: 'POST', 
 		headers: { 'Content-Type': 'application/json' }, 
-		body: JSON.stringify({ chip_id })
+		params: JSON.stringify({ chip_id })
 	})
 	if (res.status !== 200) {
-		const err = await res.text()
+		const err = await res.responseText
 		console.error(err)
 		$gameVariables.setValue(12, err)
 		return {}
 	}
-	const body = await res.json()
+	const body = JSON.parse(res.response)
 	
 	// $gameVariables.setValue(12, 0)
 	// $gameVariables.setValue(13, chip_id)
@@ -78,6 +79,36 @@ async function signupFlowVolume(chip_id = $gameVariables.value(13)) {
 
 	// await saveFVConfig()
 	return body
+}
+
+function FVMakeRequest(opts) {
+  return new Promise(function (resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(opts.method, opts.url);
+    xhr.onload = function () {
+	resolve(xhr);
+    };
+    xhr.onerror = function () {
+      reject({
+        status: this.status,
+        statusText: xhr.statusText
+      });
+    };
+    if (opts.headers) {
+      Object.keys(opts.headers).forEach(function (key) {
+        xhr.setRequestHeader(key, opts.headers[key]);
+      });
+    }
+    var params = opts.params;
+    // We'll need to stringify if we've been given an object
+    // If we have a string, this is skipped.
+    if (params && typeof params === 'object') {
+      params = Object.keys(params).map(function (key) {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+      }).join('&');
+    }
+    xhr.send(params);
+  });
 }
 
 async function mockUpdateFlowVolume(flow_volume = 0, chip_id = $gameVariables.value(13), user_id = $gameVariables.value(14)) {
